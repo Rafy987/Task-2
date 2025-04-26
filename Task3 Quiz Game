@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simple Quiz Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .quiz-container {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      width: 400px;
+      max-width: 90%;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .option {
+      background: #e4e9f0;
+      border-radius: 5px;
+      padding: 10px 15px;
+      margin: 8px 0;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .option:hover {
+      background: #c3d0e8;
+    }
+    .option.selected {
+      background: #4caf50;
+      color: white;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #2196f3;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    button:disabled {
+      background: #90caf9;
+      cursor: not-allowed;
+    }
+    .score {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-top: 20px;
+      text-align: center;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <h2 id="question">Question text</h2>
+    <div id="options"></div>
+    <button id="nextBtn" disabled>Next</button>
+    <div class="score" id="score"></div>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "What is the capital of Pakistan?",
+        options: ["Lahore", "Islamabad", "Karachi", "Peshawar"],
+        answer: "Islamabad"
+      },
+      {
+        question: "Which language is primarily used for web development?",
+        options: ["Python", "JavaScript", "C++", "Java"],
+        answer: "JavaScript"
+      },
+      {
+        question: "What does HTML stand for?",
+        options: [
+          "Hyper Text Markup Language",
+          "High Text Machine Language",
+          "Hyperlinks and Text Markup Language",
+          "Home Tool Markup Language"
+        ],
+        answer: "Hyper Text Markup Language"
+      },
+      {
+        question: "Which company developed the React library?",
+        options: ["Google", "Facebook", "Microsoft", "Apple"],
+        answer: "Facebook"
+      }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const nextBtn = document.getElementById("nextBtn");
+    const scoreEl = document.getElementById("score");
+    let selectedOption = null;
+
+    function loadQuestion() {
+      nextBtn.disabled = true;
+      selectedOption = null;
+      scoreEl.textContent = "";
+      const currentQuestion = quizData[currentQuestionIndex];
+      questionEl.textContent = currentQuestion.question;
+      optionsEl.innerHTML = "";
+
+      currentQuestion.options.forEach(optionText => {
+        const optionDiv = document.createElement("div");
+        optionDiv.classList.add("option");
+        optionDiv.textContent = optionText;
+        optionDiv.addEventListener("click", () => {
+          selectOption(optionDiv);
+        });
+        optionsEl.appendChild(optionDiv);
+      });
+    }
+
+    function selectOption(optionDiv) {
+      // Remove previous selection
+      const options = document.querySelectorAll(".option");
+      options.forEach(opt => opt.classList.remove("selected"));
+
+      // Mark current as selected
+      optionDiv.classList.add("selected");
+      selectedOption = optionDiv.textContent;
+      nextBtn.disabled = false;
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if (selectedOption === null) return;
+
+      // Check answer
+      if (selectedOption === quizData[currentQuestionIndex].answer) {
+        score++;
+      }
+
+      currentQuestionIndex++;
+
+      if (currentQuestionIndex < quizData.length) {
+        loadQuestion();
+      } else {
+        showScore();
+      }
+    });
+
+    function showScore() {
+      questionEl.textContent = "Quiz Completed!";
+      optionsEl.innerHTML = "";
+      nextBtn.style.display = "none";
+      scoreEl.textContent = `Your Score: ${score} / ${quizData.length}`;
+    }
+
+    // Initial load
+    loadQuestion();
+  </script>
+</body>
+</html>
